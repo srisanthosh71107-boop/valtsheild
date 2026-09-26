@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VaultLink - Create Secure Handover</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="cyber-grid-bg"></div>
+  <div class="glow-orb glow-orb-1"></div>
+  <div class="glow-orb glow-orb-2"></div>
+
+  <div class="container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="brand-badge">
+        <span class="status-dot"></span>
+        <span class="badge-text">AIR-GAPPED ZERO-KNOWLEDGE PROTOCOL</span>
+      </div>
+    </header>
+
+    <!-- Main Card Container -->
+    <main class="main-card">
+      
+      <!-- Section 1: Secret Creation Form -->
+      <section id="creation-section" class="ui-section active">
+        <div class="card-header">
+          <div class="shield-icon-wrapper">
+            <svg class="shield-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <path d="m9 12 2 2 4-4"/>
+            </svg>
+          </div>
+          <h1 class="main-heading">VaultLink</h1>
+          <h2 class="sub-heading">Create Secure Handover</h2>
+          <p class="description">
+            Encrypt passwords, credentials, and API keys with AES-256-GCM. Deliver via self-destructing links with multi-factor verification.
+          </p>
+        </div>
+
+        <!-- Security Visual Badges -->
+        <div class="feature-badges-grid">
+          <div class="feature-badge">
+            <span class="badge-icon">🔒</span>
+            <span>AES-256-GCM</span>
+          </div>
+          <div class="feature-badge">
+            <span class="badge-icon">💣</span>
+            <span>Self-Destructing</span>
+          </div>
+          <div class="feature-badge">
+            <span class="badge-icon">🔢</span>
+            <span>PIN Protected</span>
+          </div>
+          <div class="feature-badge">
+            <span class="badge-icon">🔑</span>
+            <span>Passphrase Required</span>
+          </div>
+          <div class="feature-badge">
+            <span class="badge-icon">🛑</span>
+            <span>Revoke Anytime</span>
+          </div>
+        </div>
+
+        <!-- Global Error Banner -->
+        <div id="form-global-error" class="alert-banner error-banner hidden" role="alert">
+          <span class="alert-icon">⚠️</span>
+          <span class="alert-msg">Unable to create secure handover. Please review your details and try again.</span>
+        </div>
+
+        <!-- Secret Creation Form -->
+        <form id="secret-form" class="secret-form" novalidate autocomplete="off">
+          
+          <!-- 1. Secret Textarea -->
+          <div class="form-group">
+            <div class="label-wrapper">
+              <label for="secret-input" class="form-label">Secret to protect <span class="required">*</span></label>
+              <span class="char-count" id="secret-char-count">0 / 10,000</span>
+            </div>
+            <textarea
+              id="secret-input"
+              name="secret"
+              class="form-textarea"
+              placeholder="Paste a password, API key, or private credential"
+              rows="5"
+              maxlength="10000"
+              required
+              spellcheck="false"
+              autocomplete="off"
+            ></textarea>
+            <span id="secret-error" class="inline-error" aria-live="polite"></span>
+          </div>
+
+          <!-- 2 & 3: Expiration & Max Views Row -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="ttl-select" class="form-label">Expiration window <span class="required">*</span></label>
+              <select id="ttl-select" name="ttl_seconds" class="form-select" required>
+                <option value="300">5 minutes</option>
+                <option value="600">10 minutes</option>
+                <option value="3600" selected>1 hour</option>
+                <option value="86400">24 hours</option>
+              </select>
+              <span id="ttl-error" class="inline-error" aria-live="polite"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="max-views-select" class="form-label">Maximum reveal attempts <span class="required">*</span></label>
+              <select id="max-views-select" name="max_views" class="form-select" required>
+                <option value="1" selected>1 view</option>
+                <option value="2">2 views</option>
+                <option value="3">3 views</option>
+                <option value="4">4 views</option>
+                <option value="5">5 views</option>
+              </select>
+              <span id="max-views-error" class="inline-error" aria-live="polite"></span>
+            </div>
+          </div>
+
+          <!-- 4 & 5: Scheduled Delivery Toggle & Field -->
+          <div class="form-group schedule-group">
+            <label class="toggle-container">
+              <input type="checkbox" id="schedule-toggle" name="is_scheduled">
+              <span class="toggle-slider"></span>
+              <span class="toggle-label">Schedule this handover</span>
+            </label>
+
+            <div id="schedule-fields-wrapper" class="schedule-fields hidden">
+              <label for="available-at-input" class="form-label">Release date & time <span class="required">*</span></label>
+              <input
+                type="datetime-local"
+                id="available-at-input"
+                name="available_at"
+                class="form-input"
+              >
+              <span class="helper-text">Secret will remain locked until this timestamp.</span>
+              <span id="available-at-error" class="inline-error" aria-live="polite"></span>
+            </div>
+          </div>
+
+          <!-- 6 & 7: Access Code & Passphrase Row -->
+          <div class="form-row">
+            <!-- Access Code -->
+            <div class="form-group">
+              <div class="label-wrapper">
+                <label for="access-code-input" class="form-label">Access code <span class="required">*</span></label>
+                <button type="button" id="generate-code-btn" class="text-action-btn" title="Generate random 6-digit code">Generate</button>
+              </div>
+              <input
+                type="text"
+                id="access-code-input"
+                name="access_code"
+                class="form-input mono"
+                placeholder="e.g. 849201"
+                maxlength="6"
+                inputmode="numeric"
+                pattern="[0-9]{6}"
+                required
+                autocomplete="off"
+              >
+              <span class="helper-text">Share this separately from the secure link.</span>
+              <span id="access-code-error" class="inline-error" aria-live="polite"></span>
+            </div>
+
+            <!-- Passphrase -->
+            <div class="form-group">
+              <label for="passphrase-input" class="form-label">Secret passphrase <span class="required">*</span></label>
+              <div class="input-with-action">
+                <input
+                  type="password"
+                  id="passphrase-input"
+                  name="passphrase"
+                  class="form-input"
+                  placeholder="Minimum 8 characters"
+                  minlength="8"
+                  maxlength="128"
+                  required
+                  autocomplete="new-password"
+                >
+                <button type="button" id="toggle-passphrase-btn" class="input-action-btn" aria-label="Toggle passphrase visibility">
+                  <svg id="eye-icon" class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                  </svg>
+                </button>
+              </div>
+              <span class="helper-text">Share this through a separate trusted channel.</span>
+              <span id="passphrase-error" class="inline-error" aria-live="polite"></span>
+            </div>
+          </div>
+
+          <!-- 8. Submit Button -->
+          <button type="submit" id="submit-btn" class="submit-btn">
+            <span class="btn-spinner hidden" id="submit-spinner"></span>
+            <span class="btn-text" id="submit-btn-text">Generate Secure Link</span>
+          </button>
+        </form>
+      </section>
+
+      <!-- Section 2: Success Handover Panel -->
+      <section id="success-section" class="ui-section hidden" aria-live="polite">
+        <div class="card-header">
+          <div class="success-icon-wrapper">
+            <svg class="success-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </div>
+          <h2 class="main-heading success-heading">Secure Handover Created</h2>
+          <div class="status-badge-container">
+            <span id="status-badge" class="status-badge active">Active Now</span>
+          </div>
+        </div>
+
+        <!-- 1. Recipient Secure Link -->
+        <div class="link-card recipient-card">
+          <div class="link-card-header">
+            <span class="link-label">Secure Recipient Link</span>
+            <span class="link-tag">Public Endpoint</span>
+          </div>
+          <div class="copy-input-group">
+            <input type="text" id="recipient-link-input" class="copy-input mono" readonly>
+            <button type="button" id="copy-view-btn" class="copy-btn">
+              <span class="copy-icon">📋</span>
+              <span class="copy-text">Copy Link</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 2. Sender Management Link -->
+        <div class="link-card management-card">
+          <div class="link-card-header">
+            <span class="link-label">Sender Management Link</span>
+            <span class="link-tag danger-tag">Private Revocation Key</span>
+          </div>
+          <div class="copy-input-group">
+            <input type="text" id="manage-link-input" class="copy-input mono" readonly>
+            <button type="button" id="copy-manage-btn" class="copy-btn secondary">
+              <span class="copy-icon">🔑</span>
+              <span class="copy-text">Copy Management Link</span>
+            </button>
+          </div>
+          <div class="card-warning-note">
+            <span class="warning-icon">⚠️</span>
+            <span>Keep this link private. It can revoke the handover.</span>
+          </div>
+        </div>
+
+        <!-- 3. QR Code & Metadata Grid -->
+        <div class="qr-details-grid">
+          <!-- QR Code Canvas -->
+          <div class="qr-box">
+            <canvas id="qr-canvas" class="qr-canvas"></canvas>
+            <span class="qr-label">Recipient can scan this secure link.</span>
+          </div>
+
+          <!-- Metadata Summary List -->
+          <div class="details-box">
+            <div class="detail-item">
+              <span class="detail-key">Status</span>
+              <span id="display-status-val" class="detail-val mono">Active</span>
+            </div>
+            <div id="display-available-row" class="detail-item hidden">
+              <span class="detail-key" id="display-available-key">Unlocks at</span>
+              <span id="display-available-at" class="detail-val mono highlight">--</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-key" id="display-expires-key">Expires at</span>
+              <span id="display-expires-at" class="detail-val mono">--</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-key">Views Allowed</span>
+              <span id="display-views-remaining" class="detail-val mono">1</span>
+            </div>
+            <div class="detail-item vertical">
+              <div class="fingerprint-header">
+                <span class="detail-key">Sender verification fingerprint</span>
+                <span id="display-fingerprint" class="detail-val fingerprint mono">--</span>
+              </div>
+              <span class="fingerprint-explanation">Deterministic SHA-256 integrity hash. Does not reveal secret content.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 9. Security Warning Card -->
+        <div class="security-advisory-card">
+          <div class="advisory-title">
+            <span>🛡️</span>
+            <strong>Zero-Trust Transmission Advisory</strong>
+          </div>
+          <p class="advisory-text">
+            Do not send the link, access code, and passphrase in the same message. Share them through separate channels (e.g. Email + SMS/Signal).
+          </p>
+        </div>
+
+        <!-- 10. Reset Form Button -->
+        <div class="action-footer">
+          <button type="button" id="create-another-btn" class="secondary-action-btn">
+            <span>+</span> Create Another Secure Handover
+          </button>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Dedicated Presentation Demo Mode Card -->
+    <section id="demo-section" class="main-card demo-card hidden" aria-label="Presentation Demo Mode">
+      <div class="card-header">
+        <div class="demo-badge-row">
+          <span class="demo-pill-badge">DEMO ENVIRONMENT</span>
+          <span class="demo-warning-badge">⚠️ Simulated Data - Never use in production</span>
+        </div>
+        <h2 class="demo-heading">Presentation Demo Mode</h2>
+        <p class="demo-description">
+          Demonstrate VaultLink's end-to-end zero-knowledge security journey, scraper shield, and atomic concurrency guarantees without risking real credentials.
+        </p>
+      </div>
+
+      <div class="demo-action-row">
+        <button type="button" id="launch-demo-btn" class="primary-action-btn demo-launch-btn">
+          <span class="btn-icon">🚀</span>
+          <span id="launch-demo-btn-text">Launch Demo Scenario</span>
+          <span id="demo-spinner" class="spinner-inline hidden"></span>
+        </button>
+      </div>
+
+      <!-- Demo Details Panel (revealed after Launch) -->
+      <div id="demo-details-panel" class="demo-details-panel hidden">
+        <!-- Demo Credentials Callout -->
+        <div class="demo-credentials-box">
+          <div class="demo-credentials-header">
+            <span class="demo-cred-icon">🔑</span>
+            <strong>Generated Demo Credentials</strong>
+          </div>
+          <div class="demo-credentials-grid">
+            <div class="cred-item">
+              <span class="cred-label">Secret Payload:</span>
+              <span class="cred-val mono">DEMO_API_KEY_NOT_REAL</span>
+            </div>
+            <div class="cred-item">
+              <span class="cred-label">6-Digit Access Code:</span>
+              <span id="demo-access-code" class="cred-val mono highlight">123456</span>
+            </div>
+            <div class="cred-item">
+              <span class="cred-label">Passphrase:</span>
+              <span id="demo-passphrase" class="cred-val mono highlight">demo-vault</span>
+            </div>
+            <div class="cred-item">
+              <span class="cred-label">Max Views / TTL:</span>
+              <span class="cred-val mono">1 view &bull; 120s TTL</span>
+            </div>
+          </div>
+
+          <div class="demo-links-group">
+            <div class="form-group">
+              <label class="form-label">Recipient Link (Safe Landing)</label>
+              <div class="input-with-action">
+                <input type="text" id="demo-recipient-link" class="form-input mono" readonly>
+                <button type="button" id="copy-demo-view-btn" class="input-inline-btn" title="Copy recipient link">
+                  📋 Copy
+                </button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Sender Management Dashboard</label>
+              <div class="input-with-action">
+                <input type="text" id="demo-manage-link" class="form-input mono" readonly>
+                <button type="button" id="copy-demo-manage-btn" class="input-inline-btn" title="Copy management link">
+                  📋 Copy
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="demo-quick-actions">
+            <a id="demo-open-recipient-btn" href="#" target="_blank" rel="noopener noreferrer" class="secondary-action-btn">
+              <span>🔗</span> Test Recipient View
+            </a>
+            <a id="demo-open-manage-btn" href="#" target="_blank" rel="noopener noreferrer" class="secondary-action-btn">
+              <span>📊</span> Open Sender Dashboard
+            </a>
+          </div>
+        </div>
+
+        <!-- Controlled Simulation Testing Suite -->
+        <div class="demo-simulation-box">
+          <h3 class="simulation-title">Security Verifications & Simulations</h3>
+          <p class="simulation-subtitle">Run automated tests directly against the active cryptographic engine:</p>
+
+          <div class="simulation-actions-grid">
+            <div class="sim-card">
+              <div class="sim-card-info">
+                <strong>Bot & Crawler Shield</strong>
+                <p>Dispatches a simulated Slackbot request to prove scrapers cannot consume the secret.</p>
+              </div>
+              <button type="button" id="simulate-crawler-btn" class="secondary-action-btn sim-btn">
+                <span>🤖</span> Simulate Crawler Visit
+              </button>
+              <div id="crawler-sim-result" class="sim-result-box hidden"></div>
+            </div>
+
+            <div class="sim-card">
+              <div class="sim-card-info">
+                <strong>Atomic Concurrency Guarantee</strong>
+                <p>Sends 20 parallel verified requests simultaneously to prove race-condition resistance.</p>
+              </div>
+              <button type="button" id="concurrency-test-btn" class="secondary-action-btn sim-btn">
+                <span>⚡</span> Run Concurrency Test
+              </button>
+              <div id="concurrency-sim-result" class="sim-result-box hidden"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Visual Security Journey Presentation Panel -->
+        <div class="demo-journey-box">
+          <div class="journey-header">
+            <h3>Visual Security Journey</h3>
+            <span class="journey-live-indicator"><span class="pulse-dot"></span> Live Sync</span>
+          </div>
+          <p class="journey-sub">Real-time status updates reflecting cryptographic and database lifecycle events:</p>
+
+          <div class="journey-timeline" id="journey-timeline">
+            <!-- 8 Steps -->
+            <div class="journey-step" data-step="1" id="step-1">
+              <div class="step-marker"><span class="step-num">1</span></div>
+              <div class="step-content">
+                <div class="step-title">Handover Created</div>
+                <div class="step-detail">AES-256-GCM encrypted payload with unique IV and auth tag.</div>
+              </div>
+              <span class="step-status-badge pending">Pending</span>
+            </div>
+
+            <div class="journey-step" data-step="2" id="step-2">
+              <div class="step-marker"><span class="step-num">2</span></div>
+              <div class="step-content">
+                <div class="step-title">Safe Metadata Stored</div>
+                <div class="step-detail">Zero plaintext stored in database; only hashes and cipher text.</div>
+              </div>
+              <span class="step-status-badge pending">Pending</span>
+            </div>
+
+            <div class="journey-step" data-step="3" id="step-3">
+              <div class="step-marker"><span class="step-num">3</span></div>
+              <div class="step-content">
+                <div class="step-title">Recipient Link Generated</div>
+                <div class="step-detail">Clean URL without sensitive query parameters.</div>
+              </div>
+              <span class="step-status-badge pending">Pending</span>
+            </div>
+
+            <div class="journey-step" data-step="4" id="step-4">
+              <div class="step-marker"><span class="step-num">4</span></div>
+              <div class="step-content">
+                <div class="step-title">Crawler Shield Tested</div>
+                <div class="step-detail">Simulated Slackbot visit received safe preview without viewing secret.</div>
+              </div>
+              <span class="step-status-badge pending">Pending</span>
+            </div>
+
+            <div class="journey-step" data-step="5" id="step-5">
+              <div class="step-marker"><span class="step-num">5</span></div>
+              <div class="step-content">
+                <div class="step-title">Multi-Factor Verification</div>
+                <div class="step-detail">Access code + passphrase verified via Argon2id / HMAC-SHA256.</div>
+              </div>
+              <span class="step-status-badge pending">Pending</span>
+            </div>
+
+            <div class="journey-step" data-step="6" id="step-6">
+              <div class="step-marker"><span class="step-num">6</span></div>
+              <div class="step-content">
+                <div class="step-title">Atomic One-Time Reveal</div>
+                <div class="step-detail">Single atomic database update; decrypted in volatile memory only.</div>
+              </div>
+              <span class="step-status-badge pending">Pending</span>
+            </div>
+
+            <div class="journey-step" data-step="7" id="step-7">
+              <div class="step-marker"><span class="step-num">7</span></div>
+              <div class="step-content">
+                <div class="step-title">Recipient Acknowledgement</div>
+                <div class="step-detail">Recipient confirms safe receipt without transmitting secret back.</div>
+              </div>
+              <span class="step-status-badge pending">Pending</span>
+            </div>
+
+            <div class="journey-step" data-step="8" id="step-8">
+              <div class="step-marker"><span class="step-num">8</span></div>
+              <div class="step-content">
+                <div class="step-title">Cryptographic Self-Destruction</div>
+                <div class="step-detail">Ciphertext, IV, auth tag purged permanently from database.</div>
+              </div>
+              <span class="step-status-badge pending">Pending</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>VaultLink Protocol &bull; Zero-Knowledge Handover Pipeline</p>
+    </footer>
+  </div>
+
+  <script src="js/qrcode.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+{
+  "name": "vaultlink",
+  "version": "1.0.0",
+  "description": "VaultLink Secure Handover Room - Secure one-time secret-sharing platform",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "test": "node --test tests/cryptoService.test.js tests/hashService.test.js tests/api.test.js tests/createSecret.test.js tests/viewRoutes.test.js tests/verifySecret.test.js tests/revealSecret.test.js tests/lifecycleSweeper.test.js tests/managementDashboard.test.js tests/panicBurn.test.js tests/acknowledgement.test.js tests/demoMode.test.js tests/securityHardening.test.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.117.1",
+    "bcrypt": "^6.0.0",
+    "dotenv": "^18.0.3",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.7.0",
+    "helmet": "^8.3.0",
+    "nanoid": "^3.3.8"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
